@@ -15,7 +15,7 @@ def serialize_face(image_path):
     else:
         data = faces[0].astype(np.float16)
         data = msgpack.packb(data, default=m.encode)
-        x_enc = base64.b64encode(data)
+        x_enc = base64.b64encode(data).decode("utf-8")
         return x_enc
 
 if __name__ == '__main__':
