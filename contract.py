@@ -32,7 +32,7 @@ def check_valid_face_obj(obj):
         return False
 
 # load registered faces from node API
-def registered_face_encodings_with_names():
+def registered_face_encodings_with_ids():
     port = os.environ['NODE_PORT']
     contract_id = json.loads(os.environ['TX'])['contractId']
     if not port: sys.exit(1)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
             found_faces = encode_faces(image)
             if len(found_faces) == 0: sys.exit(3)
             result = [{
-                'key': 'face_' + params['name'],
+                'key': 'face_' + tx['id'],
                 'type': 'string',
                 'value': serialize_narray(found_faces[0])
             }]
@@ -93,12 +93,13 @@ if __name__ == '__main__':
         elif cmd == 'MARK':
             if 'photo' not in params: sys.exit(3)
             image = narray_from_image_bytes(base64.b64decode(params['photo'][7:]))
-            registered_faces = registered_face_encodings_with_names()
-            found_face_names = recognize(image, registered_faces)
+            registered_faces = registered_face_encodings_with_ids()
+            found_face_ids = recognize(image, registered_faces)
+            ts = 'mark_' + str(tx['timestamp'])
             result = [{
-                'key': 'result',
+                'key': ts,
                 'type': 'string',
-                'value': json_to_string_without_spaces(found_face_names)
+                'value': json_to_string_without_spaces(found_face_ids)
             }]
             print(json_to_string_without_spaces(result))
         else:
