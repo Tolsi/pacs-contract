@@ -77,13 +77,17 @@ if __name__ == '__main__':
     if command == 'CALL':
         tx = json.loads(os.environ['TX'])
         params = params_objects_to_map(tx['params'])
-        if 'cmd' not in params: sys.exit(3)
+        if 'cmd' not in params:
+            print("there is no 'cmd' field: " + str(params))
+            sys.exit(3)
         cmd = params['cmd']
         if cmd == 'ADD':
             if 'photo' not in params or 'name' not in params or 'details' not in params: sys.exit(3)
             image = narray_from_image_bytes(base64.b64decode(params['photo'][7:].encode('utf-8')))
             found_faces = encode_faces(image)
-            if len(found_faces) == 0: sys.exit(3)
+            if len(found_faces) == 0:
+                print("there're no founded faces on the image")
+                sys.exit(3)
             result = [{
                 'key': 'face_' + tx['id'],
                 'type': 'binary',
@@ -92,7 +96,7 @@ if __name__ == '__main__':
             print(json_to_string_without_spaces(result))
         elif cmd == 'MARK':
             if 'photo' not in params:
-                print("there is not photo: params")
+                print("there is no 'photo' field: " + str(params))
                 sys.exit(3)
             image = narray_from_image_bytes(base64.b64decode(params['photo'][7:].encode('utf-8')))
             registered_faces = registered_face_encodings_with_ids()
@@ -105,8 +109,10 @@ if __name__ == '__main__':
             }]
             print(json_to_string_without_spaces(result))
         else:
+            print("unknown command: " + cmd)
             sys.exit(3)
     elif command == 'CREATE':
         sys.exit(0)
     else:
+        print("unknown command: " + command)
         sys.exit(3)
