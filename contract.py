@@ -19,7 +19,7 @@ def deserialize_narray(str):
 
 def serialize_narray(array):
     data = msgpack.packb(array.astype(np.float16), default=m.encode)
-    return base64.b64encode(data)
+    return base64.b64encode(data).decode("utf-8")
 
 def narray_from_image_bytes(bytes):
     image = Image.open(io.BytesIO(bytes))
@@ -77,22 +77,24 @@ if __name__ == '__main__':
     if command == 'CALL':
         tx = json.loads(os.environ['TX'])
         params = params_objects_to_map(tx['params'])
-        if 'cmd' not in params or 'name' not in params: sys.exit(3)
+        if 'cmd' not in params: sys.exit(3)
         cmd = params['cmd']
         if cmd == 'ADD':
-            if 'photo' not in params: sys.exit(3)
-            image = narray_from_image_bytes(base64.b64decode(params['photo'][7:]))
+            if 'photo' not in params or 'name' not in params or 'details' not in params: sys.exit(3)
+            image = narray_from_image_bytes(base64.b64decode(params['photo'][7:].encode('utf-8')))
             found_faces = encode_faces(image)
             if len(found_faces) == 0: sys.exit(3)
             result = [{
                 'key': 'face_' + tx['id'],
-                'type': 'string',
+                'type': 'binary',
                 'value': serialize_narray(found_faces[0])
             }]
             print(json_to_string_without_spaces(result))
         elif cmd == 'MARK':
-            if 'photo' not in params: sys.exit(3)
-            image = narray_from_image_bytes(base64.b64decode(params['photo'][7:]))
+            if 'photo' not in params:
+                print("there is not photo: params")
+                sys.exit(3)
+            image = narray_from_image_bytes(base64.b64decode(params['photo'][7:].encode('utf-8')))
             registered_faces = registered_face_encodings_with_ids()
             found_face_ids = recognize(image, registered_faces)
             ts = 'mark_' + str(tx['timestamp'])
