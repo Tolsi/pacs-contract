@@ -8,7 +8,7 @@ from sqlalchemy import JSON
 from node import get_blocks_in_range, get_current_height
 
 WAIT_CONFIRMATIONS = 1
-CONTRACT_ID = "H7XhErK1YzmY2i1EzNpfcSZv44vEFQGKLa89gUjsi15"
+CONTRACT_ID = "GPnVdqACjSo4wevbRioCVMAa1guwMyABqEeBxbzxkAFE"
 
 # init db
 db = dataset.connect('sqlite:///db.sqlite')
@@ -52,8 +52,6 @@ while True:
         blocks = get_blocks_in_range(current_block, next_height)
         db.begin()
         for block in blocks:
-            print(block)
-            print('processing ' + block['signature'])
             if len(block['transactions']) > 0:
                 executed_call_contract_txs = filter(
                     lambda tx: 'tx' in tx and tx['tx']['type'] == 104 and tx['tx']['contractId'] == CONTRACT_ID,
@@ -85,6 +83,7 @@ while True:
         save_current_block(next_height)
         db.commit()
         current_block = next_height
+        print("done")
     else:
         print('there\'re no new blocks')
     sleep(30)
