@@ -8,7 +8,7 @@ def serialize_image(image_path):
     im = Image.open(image_path)
     im.thumbnail([350, 350])
     bytes = io.BytesIO()
-    im.save(bytes, format='JPEG', subsampling=2, quality=0)
+    im.convert('RGB').save(bytes, format='JPEG', subsampling=2, quality=0)
     bytes.seek(0)
     data = bytes.read()
     x_enc = base64.b64encode(data).decode("utf-8")
