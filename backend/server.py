@@ -20,7 +20,7 @@ marks_table = db['marks']
 
 from datetime import datetime
 
-CONTRACT_ID = "H7XhErK1YzmY2i1EzNpfcSZv44vEFQGKLa89gUjsi15"
+CONTRACT_ID = "GPnVdqACjSo4wevbRioCVMAa1guwMyABqEeBxbzxkAFE"
 SENDER = "3N2ALKEtTHj2WBCxrmnCgBrf1AoTuv84bbF"
 CALL_CONTRACT_NODE_URL = 'http://localhost:6862/contracts/execute'
 APIKEY = 'vostok'
@@ -91,9 +91,14 @@ def employees_by_day():
 
     start = datetime(query_datetime.year, query_datetime.month, query_datetime.day, tzinfo=tz.tzutc()).astimezone(tz.gettz('Europe/Moscow'))
     end = start + timedelta(1)
-    result = list(db.query('SELECT q.ts, q.mark_photo, e.name, e.details, e.photo FROM (SELECT CAST(strftime(\'%s\', i) AS INT) AS ts, employee, mark_photo FROM (SELECT m.id AS i, m.mark_photo AS mark_photo, j.value AS employee FROM marks AS m CROSS JOIN json_each(m.employees) AS j where m.id between date(:from) and date(:to)) GROUP BY employee) AS q LEFT JOIN employees AS e ON q.employee == e.id;', {'from': start, 'to': end}))
+    results = list(db.query('SELECT q.ts, q.mark_photos, e.name, e.details, e.photo FROM (SELECT json_group_array(CAST(strftime(\'%s\', i) AS INT)) AS ts, json_group_array(mark_photo) as mark_photos, employee FROM (SELECT m.id AS i, m.mark_photo AS mark_photo, j.value AS employee FROM marks AS m CROSS JOIN json_each(m.employees) AS j where m.id between date(:from) and date(:to)) GROUP BY employee) AS q LEFT JOIN employees AS e ON q.employee == e.id;', {'from': start, 'to': end}))
 
-    return jsonify(result)
+    def handle_json_fields(res):
+        res['ts'] = json.loads(res['ts'])
+        res['mark_photos'] = json.loads(res['mark_photos'])
+        return res
+
+    return jsonify([handle_json_fields(result) for result in results])
 
 @app.route('/all_employees')
 def all_employees():
