@@ -1,9 +1,13 @@
+import sys
+
+sys.path.append('../backend')
+
 from serialize_image import serialize_image
 import os
 from node import register_face
 
-CONTRACT_ID = "H7XhErK1YzmY2i1EzNpfcSZv44vEFQGKLa89gUjsi15"
-SENDER = "3N2ALKEtTHj2WBCxrmnCgBrf1AoTuv84bbF"
+CONTRACT_ID = "Adrq8E52S7GqcGP2jHg75fqxUCCmysBLaJMadXTqdFQm"
+SENDER = "3Mrnkp5oc5NBuJgePjKZ5Yfn5heR3UKbCUN"
 
 faces_dir = "../faces"
 
