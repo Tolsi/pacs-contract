@@ -7,9 +7,11 @@ from itertools import islice
 NODE = 'http://127.0.0.1:6862'
 
 def mark_image(contract_id, sender, image_base64):
-    r = requests.post(NODE + '/contracts/execute', json={
+    r = requests.post(NODE + '/transactions/sign', json={
+	    "broadcast": True,
+		"type": 104,
         "contractId": contract_id,
-        "fee": 10000000,
+        "fee": 15000000,
         "sender": sender,
         "type": 104,
         "version": 1,
@@ -22,9 +24,11 @@ def mark_image(contract_id, sender, image_base64):
         raise ValueError("Bad request: " + r.text)
 
 def register_face(contract_id, sender, name, details, image_base64):
-    r = requests.post(NODE + '/contracts/execute', json={
-        "contractId": contract_id,
-        "fee": 10000000,
+    r = requests.post(NODE + '/transactions/sign', json={
+        "broadcast": True,
+		"type": 104,
+		"contractId": contract_id,
+        "fee": 15000000,
         "sender": sender,
         "type": 104,
         "version": 1,

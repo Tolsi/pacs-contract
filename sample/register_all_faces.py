@@ -1,9 +1,10 @@
+from serialize_image import serialize_image
+import os
+
 import sys
 
 sys.path.append('../backend')
 
-from serialize_image import serialize_image
-import os
 from node import register_face
 
 CONTRACT_ID = "Adrq8E52S7GqcGP2jHg75fqxUCCmysBLaJMadXTqdFQm"

@@ -53,7 +53,7 @@ def recognize(image, known_face_encodings_with_names):
     found_face_names = []
     for face_encoding in face_encodings:
         # See if the face is a match for the known face(s)
-        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance = 0.45)
         name = "unknown"
 
         # If a match was found in known_face_encodings, just use the first one.

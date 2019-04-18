@@ -87,4 +87,4 @@ while True:
         print("done")
     else:
         print('there\'re no new blocks')
-    sleep(30)
+    sleep(5)
