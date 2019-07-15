@@ -9,3 +9,5 @@ docker build -t pacs-contract .
 docker image tag pacs-contract 127.0.0.1:5000/pacs-contract
 docker push 127.0.0.1:5000/pacs-contract
 ```
+
+Then you can start your private network, call create contract transaction with this contract, change a little the backend scripts and start it.
